@@ -1,9 +1,10 @@
 import { WindowSize } from '../utils/appWindow';
-import Rect from './Rect';
+import Rect from '../models/Rect';
 
-export function getGround(size: WindowSize): Rect {
+export function getGround(size: WindowSize, level = 1): Rect {
+  const levelHeight = size.height / 3;
   const x = 0;
-  const y = size.height / 3;
+  const y = levelHeight * level;
   const height = 16;
   const width = size.width;
 

@@ -4,11 +4,13 @@ import {
 } from '../utils/appEvents';
 import Rect from '../models/Rect';
 import { randomRgba } from '../utils/color';
+import Vector from '../models/Vector';
 
-export default class SimpleJumper {
+export default class VectorJumper {
   static Size = 32;
   static Gravity = 2;
-  static Friction = 0.9;
+  static GroundFriction = 0.9;
+  static AirFriction = 0.9;
   static JumpPower = 30;
   static MovingSpeed = 1;
 
@@ -23,8 +25,7 @@ export default class SimpleJumper {
     private x = 0,
     private y = 0,
     private jumping = true,
-    private xVelocity = 0,
-    private yVelocity = 0,
+    private velocity = new Vector(0, 0),
     private color = randomRgba(),
   ) {
     this.controller = {
@@ -57,40 +58,46 @@ export default class SimpleJumper {
   draw(ctx: CanvasRenderingContext2D): void {
     ctx.fillStyle = this.color;
     ctx.beginPath();
-    ctx.rect(this.x, this.y, SimpleJumper.Size, SimpleJumper.Size);
+    ctx.rect(this.x, this.y, VectorJumper.Size, VectorJumper.Size);
     ctx.fill();
   }
 
   update(ground: Rect): void {
     if (this.controller.up && !this.jumping) {
-      this.yVelocity -= SimpleJumper.JumpPower;
+      this.velocity = this.velocity.add(new Vector(0, 20));
       this.jumping = true;
     }
 
     if (this.controller.left) {
-      this.xVelocity -= SimpleJumper.MovingSpeed;
+      this.velocity = this.velocity.subtract(
+        new Vector(VectorJumper.MovingSpeed, 0),
+      );
     }
 
     if (this.controller.right) {
-      this.xVelocity += SimpleJumper.MovingSpeed;
+      this.velocity = this.velocity.add(
+        new Vector(VectorJumper.MovingSpeed, 0),
+      );
     }
 
-    this.x += this.xVelocity;
-    this.y += this.yVelocity;
-    this.yVelocity += SimpleJumper.Gravity;
-    this.xVelocity *= SimpleJumper.Friction;
-    this.yVelocity *= SimpleJumper.Friction;
+    this.x += this.velocity.components[0];
+    this.y += this.velocity.components[1];
+    this.velocity = this.velocity.add(new Vector(0, VectorJumper.Gravity));
+    this.velocity = this.velocity.add(
+      new Vector(VectorJumper.GroundFriction, 0),
+    );
+    this.velocity = this.velocity.add(new Vector(0, VectorJumper.AirFriction));
 
-    if (this.y > ground.y - SimpleJumper.Size) {
+    if (this.y > ground.y - VectorJumper.Size) {
       this.jumping = false;
-      this.y = ground.y - SimpleJumper.Size;
-      this.yVelocity = 0;
+      this.y = ground.y - VectorJumper.Size;
+      this.velocity = new Vector(this.velocity.components[0], 0);
     }
 
-    if (this.x < -SimpleJumper.Size) {
+    if (this.x < -VectorJumper.Size) {
       this.x = ground.width;
     } else if (this.x > ground.width) {
-      this.x = -SimpleJumper.Size;
+      this.x = -VectorJumper.Size;
     }
   }
 }
