@@ -1,2 +1,3 @@
-# canvas-app-template
-Template for building application using HTML canvas and TypeScript
+# Jumping in platform game
+
+Examples of implementing jumping in platform game.

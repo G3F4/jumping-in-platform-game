@@ -6,14 +6,20 @@ let fpsInterval: number,
   elapsed: number,
   loop: (loopTime: number) => void;
 
-type AppLoop = ({ currentFps }: { currentFps: number }) => void;
+export interface FrameProps {
+  currentFps: number;
+  fpsInterval: number;
+  elapsed: number;
+}
+
+export type OnFrame = (props: FrameProps) => void;
 
 export default function appLoop({
   fps,
   onFrame,
 }: {
   fps: number;
-  onFrame: AppLoop;
+  onFrame: OnFrame;
 }): void {
   fpsInterval = 1000 / fps;
   then = window.performance.now();
@@ -22,7 +28,7 @@ export default function appLoop({
   loop(startTime);
 }
 
-function createLoop(logic: AppLoop) {
+function createLoop(logic: OnFrame) {
   return (loopTime: number) => {
     requestAnimationFrame(loop);
 
@@ -36,7 +42,7 @@ function createLoop(logic: AppLoop) {
       const currentFps =
         Math.round((1000 / (sinceStart / ++frameCount)) * 100) / 100;
 
-      logic({ currentFps });
+      logic({ currentFps, fpsInterval, elapsed });
     }
   };
 }

@@ -31,16 +31,16 @@ export default class Vector {
     return this.normalize().scaleBy(newLength);
   }
 
-  add({ components }: Vector) {
+  add(other: Vector) {
     return new Vector(
-      ...components.map(
+      ...other.components.map(
         (component, index) => this.components[index] + component,
       ),
     );
   }
-  subtract({ components }: Vector) {
+  subtract(other: Vector) {
     return new Vector(
-      ...components.map(
+      ...other.components.map(
         (component, index) => this.components[index] - component,
       ),
     );
@@ -52,8 +52,8 @@ export default class Vector {
     );
   }
 
-  dotProduct({ components }: Vector) {
-    return components.reduce(
+  dotProduct(vector: Vector) {
+    return vector.components.reduce(
       (acc, component, index) => acc + component * this.components[index],
       0,
     );

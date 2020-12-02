@@ -3,7 +3,6 @@ import {
   registerKeyUpHandler,
 } from '../utils/appEvents';
 import Rect from '../models/Rect';
-import { randomRgba } from '../utils/color';
 
 export default class SimpleJumper {
   static Size = 32;
@@ -25,7 +24,7 @@ export default class SimpleJumper {
     private jumping = true,
     private xVelocity = 0,
     private yVelocity = 0,
-    private color = randomRgba(),
+    private color = 'red',
   ) {
     this.controller = {
       left: false,
